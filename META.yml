@@ -32,4 +32,4 @@ requires:
   perl: '5.014000'
 resources:
   repository: git://gitorious.org/ceata/ceata-eduard.git
-version: '0.001'
+version: '0.001001'

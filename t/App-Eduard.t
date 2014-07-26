@@ -7,7 +7,7 @@ use constant EMAIL => 'Eduard (Key for testing Eduard) <eduard@ceata.org>';
 
 use File::Copy qw/cp/;
 use File::Temp qw/tempdir/;
-use Test::More tests => 20;
+use Test::More tests => 23;
 BEGIN { use_ok('App::Eduard', qw/import_pubkeys process_message/) };
 
 umask 0077; # GPG doesn't like group-/world-readable homedirs
@@ -50,3 +50,7 @@ process 'inline-signed-encrypted', 'signencrypt';
 is $params{keyid}, KEYID, 'inline-signed-encrypted keyid';
 is $params{email}, EMAIL, 'inline-signed-encrypted email';
 like $params{plaintext}, qr/Inline signed & encrypted/, 'inline-signed-encrypted plaintext';
+
+process 'inline-signed-attachment', 'sign';
+is $params{keyid}, KEYID, 'inline-signed-attachment keyid';
+is $params{email}, EMAIL, 'inline-signed-attachment email';

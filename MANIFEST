@@ -8,6 +8,7 @@ t/App-Eduard.t
 t/data/contains-pubkey
 t/data/inline-encrypted
 t/data/inline-signed
+t/data/inline-signed-attachment
 t/data/inline-signed-encrypted
 t/data/mime-encrypted
 t/data/mime-signed
