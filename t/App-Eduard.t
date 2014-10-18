@@ -7,7 +7,7 @@ use constant EMAIL => 'Eduard (Key for testing Eduard) <eduard@ceata.org>';
 
 use File::Copy qw/cp/;
 use File::Temp qw/tempdir/;
-use Test::More tests => 23;
+use Test::More tests => 25;
 BEGIN { use_ok('App::Eduard', qw/import_pubkeys process_message/) };
 
 umask 0077; # GPG doesn't like group-/world-readable homedirs
@@ -32,7 +32,7 @@ is $params{keyid}, KEYID, 'mime-signed keyid';
 is $params{email}, EMAIL, 'mime-signed email';
 
 process 'mime-encrypted', 'encrypt';
-like $params{plaintext}, qr/MIME encrypted/, 'mime-signed plaintext';
+like $params{plaintext}, qr/MIME encrypted/, 'mime-encrypted plaintext';
 
 process 'mime-signed-encrypted', 'signencrypt';
 is $params{keyid}, KEYID, 'mime-signed-encrypted keyid';
@@ -44,7 +44,7 @@ is $params{keyid}, KEYID, 'inline-signed keyid';
 is $params{email}, EMAIL, 'inline-signed email';
 
 process 'inline-encrypted', 'encrypt';
-like $params{plaintext}, qr/Inline encrypted/, 'inline-signed plaintext';
+like $params{plaintext}, qr/Inline encrypted/, 'inline-encrypted plaintext';
 
 process 'inline-signed-encrypted', 'signencrypt';
 is $params{keyid}, KEYID, 'inline-signed-encrypted keyid';
@@ -54,3 +54,6 @@ like $params{plaintext}, qr/Inline signed & encrypted/, 'inline-signed-encrypted
 process 'inline-signed-attachment', 'sign';
 is $params{keyid}, KEYID, 'inline-signed-attachment keyid';
 is $params{email}, EMAIL, 'inline-signed-attachment email';
+
+process 'inline-encrypted-attachment', 'encrypt';
+like $params{plaintext}, qr/Inline encrypted/, 'inline-encrypted plaintext';

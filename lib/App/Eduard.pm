@@ -4,7 +4,7 @@ use 5.014000;
 use strict;
 use warnings;
 use parent qw/Exporter/;
-our $VERSION = '0.001001';
+our $VERSION = '0.001002';
 our @EXPORT_OK = qw/import_pubkeys process_message/;
 
 use Email::Sender::Simple qw/sendmail/;
@@ -63,13 +63,13 @@ sub import_pubkeys {
 	@keys
 }
 
-sub find_signed_part {
+sub find_pgp_part {
 	my ($ent, $mg) = @_;
 	do {
-		my $part = find_signed_part ($_, $mg);
+		my $part = find_pgp_part ($_, $mg);
 		return $part if $part
 	} for $ent->parts;
-	return $ent if $ent->bodyhandle && $mg->is_signed($ent);
+	return $ent if $ent->bodyhandle && ($mg->is_signed($ent) || $mg->is_encrypted($ent));
 	return
 }
 
@@ -91,12 +91,13 @@ sub process_message {
 	}
 
 	my $gpg = mg;
+	if ($msg->effective_type ne 'multipart/signed' && $msg->effective_type ne 'multipart/encrypted' && !$msg->bodyhandle) {
+		debug 'This is (probably) a PGP/Inline mail with attachments. Working around...';
+		$msg = find_pgp_part $msg, $gpg
+	}
+
 	if ($gpg->is_signed($msg)) {
 		debug 'This mail looks signed';
-		if ($msg->effective_type ne 'multipart/signed' && !$msg->bodyhandle) {
-			debug 'This is a PGP/Inline mail with attachments. Working around...';
-			$msg = find_signed_part $msg, $gpg
-		}
 		my ($code, $keyid, $email) = $gpg->verify($msg);
 		return sign_error => (
 			message => stringify $gpg->{last_message}) if $code;

@@ -1,5 +1,8 @@
 Revision history for Perl extension App::Eduard.
 
+0.001002 2014-10-18T23:31+03:00
+ - Apply the PGP/Inline with attachments workaround to all non-PGP/MIME mails
+
 0.001001 2014-07-27T01:18+03:00
  - Work around PGP/Inline signed mails with attachments
 
